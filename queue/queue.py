@@ -59,24 +59,29 @@ class LinkedList:
         # last node in the list
         self.tail = None
 
-    def add_to_head(self, value):
+    def add_to_tail(self, value):
         new_node = Node(value)
-        # what if the list is empty?
-        if not self.head and not self.tail:
-            # set both head and tail to new_node
-            self.head = new_node
-            self.tail = new_node
-        # what if the list isn't empty?
-        else:
-            self.tail.set_next(self.head)
-            self.head = new_node
 
-    def remove_tail(self):
-        if self.tail is None:
-            return None
+        # if queue is empty set new_node as the head
+        if not self.head:
+            self.head = new_node
         else:
-            self.tail = self.tail.get_value()
-            return self.tail
+            # start at the head
+            current = self.head
+            # as long as there is another node
+            while current.get_next() is not None:
+                # traverse the list to the end
+                current = current.get_next()
+            # add new_node to the end
+            current.set_next(new_node)
+
+    def remove_head(self):
+        if self.head:
+            # store value to return later
+            value = self.head.get_value()
+            # set head to the next node
+            self.head = self.head.get_next()
+            return value
 
 
 class Queue:
@@ -88,11 +93,11 @@ class Queue:
         return self.size
 
     def enqueue(self, value):
-        self.storage.add_to_head(value)
+        self.storage.add_to_tail(value)
         self.size = self.size + 1
 
     def dequeue(self):
         if self.size != 0:
-            value = self.storage.remove_tail()
+            value = self.storage.remove_head()
             self.size = self.size - 1
             return value
