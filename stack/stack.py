@@ -30,58 +30,90 @@ return elements in Last In First Out order.
 #             return value
 
 
-# from guided project
+
 class Node:
-    def __init__(self, value=None, next_node=None):
-        # value at this node
+    def __init__(self, value, next=None):
         self.value = value
-        # reference to the next node in the list of nodes
-        self.next_node = next_node
+        self.next_node = next
 
     def get_value(self):
+        # returns the node's data
         return self.value
 
     def get_next(self):
+        # returns the thing pointed at by this node's `next` reference
         return self.next_node
 
     def set_next(self, new_next):
-        # set this node's next reference to the passed in node
+        # sets this node's `next` reference to `new_next`
         self.next_node = new_next
 
 
 class LinkedList:
     def __init__(self):
-        # first node in the list
+        # the first Node in the LinkedList
         self.head = None
-        # last node in the list
+        # the last Node in the LinkedList
         self.tail = None
 
-    # we don't have access to the end of the linked list
-    # when we want to add to the end, we need to traverse the whole linked list to get to the end
-    # O(n) - linear
-
-    # we have direct access to end of the list so we can add nodes to it directly
-    def add_to_tail(self, value):
-        # regardless of if the list is empty or not, we need to wrap the value in a Node
-        new_node = Node(value)
-        # what if the list is empty?
+    def add_to_tail(self, data):
+        # wrap the `data` in a Node instance
+        new_node = Node(data)
+        # what about the empty case, when both self.head = None and self.tail = None?
         if not self.head and not self.tail:
-            # set both head and tail to new_node
+            # list is empty
+            # update both head and tail to point to the new node
             self.head = new_node
             self.tail = new_node
-        # what if the list isn't empty?
+        # non-empty linked list case
         else:
-            # set the current tail's next to the new node
+            # call set_next with the new_node on the current tail node
             self.tail.set_next(new_node)
-            # set self.tail to the new node
+            # update self.tail to point to the new last Node in the linked list
             self.tail = new_node
 
     def remove_tail(self):
+        # if the linked list is empty
+        if self.tail is None:
+            return None
+        # save the tail Node's data
+        data = self.tail.get_value()
+        # both head and tail refer to the same Node
+        # there's only one Node in the linked list
+        if self.head is self.tail:
+            # set both to be None
+            self.head = None
+            self.tail = None
+        else:
+            current = self.head
+            while current.get_next() != self.tail:
+                current = current.get_next()
+            # `current` is now pointing at the Node right
+            # before the tail Node
+            self.tail = None
+            self.tail = current
+            # self.tail.set_next(None)
+
+        return data
+
+    def remove_head(self):
         if self.head is None:
             return None
+        # save the head Node's data
+        data = self.head.get_value()
+        # both head and tail refer to the same Node
+        # there's only one Node in the linked list
+        if self.head is self.tail:
+            # set both to be None
+            self.head = None
+            self.tail = None
         else:
-            self.head = self.head.get_value()
-            return self.head
+            # we have more than one Node in the linked list
+            # delete the head Node
+            # update `self.head` to refer to the Node after the Node we just deleted
+            self.head = self.head.get_next()
+
+        return data
 
 
 class Stack:
@@ -99,4 +131,6 @@ class Stack:
     def pop(self):
         if self.size > 0:
             self.size = self.size - 1
-            self.storage.remove_tail()
+            return self.storage.remove_tail()
+        else:
+            return None
